@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
   res.send('¡El servidor de la Óptica está funcionando!');
 });
 
-// Ruta 2: De prueba para la Base de Datos
+
 app.get('/test-db', async (req, res) => {
   try {
     // Hacemos una consulta muy simple a Postgres para ver si responde
@@ -38,6 +38,22 @@ app.get('/test-db', async (req, res) => {
     res.status(500).json({ error: 'Hubo un problema conectando a la BD' });
   }
 });
+
+// Ruta para obtener el catálogo
+app.get('/api/catalogo', async (req, res) => {
+  try {
+   
+    const query = "SELECT Titulo, Descripcion, Precio, UrlImagen, Seccion FROM catalogoimagenes ORDER BY ID_Imagen DESC";
+    const respuesta = await pool.query(query);
+    
+    // Devolvemos los datos a React en formato JSON
+    res.json(respuesta.rows);
+  } catch (error) {
+    console.error('Error al cargar el catálogo:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
 
 // Iniciar el servidor
 app.listen(port, () => {
